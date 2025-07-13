@@ -13,7 +13,7 @@ type Code struct {
 	Type string
 }
 
-type Codes []Code
+type Codes []*Code
 
 const (
 	barcodeapi = "https://barcodeapi.org/api"
