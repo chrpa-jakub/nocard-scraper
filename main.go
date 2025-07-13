@@ -10,6 +10,10 @@ import (
 	"time"
 )
 
+const (
+	nocardurl = "https://nocard.cz"
+)
+
 func main() {
 	counter := 0
 	ticker := time.NewTicker(time.Millisecond*50)
@@ -19,6 +23,11 @@ func main() {
 		counter++
 		fmt.Println(counter)
 		ScrapeWrapper()
+
+		if counter == 500 {
+			fmt.Println("Scraping done, check the data folder.")
+			return
+		}
 	}
 }
 
@@ -45,7 +54,7 @@ func ScrapeWrapper() {
 }
 
 func NocardHtml() (string, error) {
-	request, err := http.Get("https://nocard.cz")
+	request, err := http.Get(nocardurl)
 
 	if err != nil {
 		return "", err
