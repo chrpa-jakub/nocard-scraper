@@ -68,7 +68,7 @@ func (c *Code) DumpImage() error {
 }
 
 func (c *Code) Image() (string, error) {
-	url := fmt.Sprintf("%s/%s/%s?",barcodeapi, c.Type, c.Value)
+	url := fmt.Sprintf("%s/%s/%s?", barcodeapi, c.Type, c.Value)
 	request, err := http.Get(url)
 
 	if err != nil {

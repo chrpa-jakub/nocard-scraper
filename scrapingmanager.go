@@ -80,6 +80,11 @@ func FilterCodes(rawHtml string) Codes {
 	for _, line := range htmlSplit {
 		if strings.Contains(line, `"card `) {
 			lineSplit := strings.Split(line, `"`)
+
+			if len(lineSplit) < 10 {
+				break
+			}
+
 			codes = append(codes, NewCode(lineSplit[5], lineSplit[9], lineSplit[7]))
 		}
 	}
