@@ -1,3 +1,3 @@
 I wrote this on a train ride while bored, because I wanted to download all the cards from [https://nocard.cz](https://nocard.cz). 
 
-I just let it run ~500 times to make sure I get all of them. (There isn't a lot of them.) 
+The page also reports that there are 892 cards, but it only ever gives you 187 of them.

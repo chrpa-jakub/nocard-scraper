@@ -7,10 +7,20 @@ import (
 	"os"
 )
 
+type CodesMap struct {
+	Store string `json:"name"`
+	Values []string `json:"codes"`
+	Type string `json:"type"`
+}
+
 type Code struct {
-	Store string
-	Value string
-	Type string
+	Store string `json:"name"`
+	Value string `json:"codes"`
+	Type string `json:"type"`
+}
+
+type Image struct {
+	Body string
 }
 
 type Codes []*Code
@@ -18,12 +28,23 @@ type Codes []*Code
 const (
 	barcodeapi = "https://barcodeapi.org/api"
 )
-	
+
 var typeMap = map[string]string{
 	"code128": "128",
 	"ean13": "13",
 	"qr": "qr",
 }
+
+func (c *CodesMap) extractCodes(key string) Codes {
+	toReturn := Codes{}
+
+	for _, v := range c.Values {
+		toReturn = append(toReturn, NewCode(key, v, c.Type))
+	}
+
+	return toReturn
+}
+
 
 func NewCode(store string, value string, typeValue string) *Code {
 	return &Code{
@@ -32,6 +53,7 @@ func NewCode(store string, value string, typeValue string) *Code {
 		Type: typeMap[typeValue],
 	}
 }
+
 
 func (c *Code) DumpImage() error {
 	dataFolder := "data/"+c.Store
@@ -55,7 +77,6 @@ func (c *Code) DumpImage() error {
 
 	}
 
-
 	file, err := os.Create(fileName)
 
 	if err != nil {
@@ -63,7 +84,6 @@ func (c *Code) DumpImage() error {
 	}
 
 	file.WriteString(image)
-
 	return nil
 }
 

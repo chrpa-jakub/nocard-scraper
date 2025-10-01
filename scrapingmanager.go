@@ -1,13 +1,13 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
 	"os"
 	"strings"
 	"sync"
-	"time"
 )
 
 const (
@@ -15,21 +15,8 @@ const (
 )
 
 func Start() {
-	counter := 0
-	ticker := time.NewTicker(time.Millisecond*50)
-	defer ticker.Stop()
-
-	for range ticker.C {
-		counter++
-		fmt.Println(counter)
-		Scrape()
-
-		if counter == 500 {
-			fmt.Println("Scraping done, check the data folder.")
-			return
-		}
-	}
-
+	Scrape()
+	fmt.Println("Scraping done, check the data folder.")
 }
 
 func Scrape() {
@@ -74,20 +61,23 @@ func NocardHtml() (string, error) {
 }
 
 func FilterCodes(rawHtml string) Codes {
-	htmlSplit := strings.Split(rawHtml, "\n")
 	codes := Codes{}
 
-	for _, line := range htmlSplit {
-		if strings.Contains(line, `"card `) {
-			lineSplit := strings.Split(line, `"`)
+	jsonData := strings.Split(rawHtml, "<script>")[2]
+	jsonData = strings.Split(jsonData, "</script>")[0]
+	jsonData = strings.Join(strings.Split(jsonData, "{")[1:], "{")
+	jsonData = strings.Split(jsonData, ";")[0]
+	jsonData = "{"+jsonData
 
-			if len(lineSplit) < 10 {
-				break
-			}
+	var codeMap map[string]CodesMap
 
-			codes = append(codes, NewCode(lineSplit[5], lineSplit[9], lineSplit[7]))
-		}
+	if err := json.Unmarshal([]byte(jsonData), &codeMap); err != nil {
+		panic(err)
 	}
-	
+
+	for key, val := range codeMap {
+		codes = append(codes, val.extractCodes(key)...)
+	}
+
 	return codes
 }
